@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
@@ -20,7 +21,19 @@ async function run() {
     try {
         await client.connect();
         const inventoryCollection = client.db('bookWarehouse').collection('inventory');
+        const orderCollection = client.db('bookWarehouse').collection('order');
 
+        //AUTH
+        // app.post('/login', async (req, res) => {
+        //     const user = req.body
+        //     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{
+        //         expiresIn:'id'
+        //     })
+        //     res.send({accessToken});
+        // })
+
+
+        //Inventories API
         app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = inventoryCollection.find(query);
@@ -42,10 +55,25 @@ async function run() {
         })
 
         // Delete
-        app.delete('/inventory/:id', async(req, res)=> {
+        app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await inventoryCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // Order Collection API
+        app.get('/order', async (req, res) => {
+            const email =req.query.email;
+            console.log(email);
+            const query = {email:email};
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        })
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
