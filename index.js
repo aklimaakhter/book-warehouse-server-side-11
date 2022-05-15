@@ -23,14 +23,14 @@ async function run() {
         const inventoryCollection = client.db('bookWarehouse').collection('inventory');
         const orderCollection = client.db('bookWarehouse').collection('order');
 
-        //AUTH
-        // app.post('/login', async (req, res) => {
-        //     const user = req.body
-        //     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{
-        //         expiresIn:'id'
-        //     })
-        //     res.send({accessToken});
-        // })
+        // AUTH
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{
+                expiresIn:'1d'
+            })
+            res.send({accessToken});
+        })
 
 
         //Inventories API
